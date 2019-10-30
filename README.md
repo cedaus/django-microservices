@@ -10,3 +10,7 @@ This project comprises of following microservices/micro-features built on top of
 
 ## REALT TIME CHAT
 In this part I will talk about developing a real time chat. You can check the chat working in this video.
+#### Features of Chat App:
+* Chat is based on channel which comprise of two participants
+* Participants can send each other messages in text, file, image form
+* Participants can take actions like delete and forward a message
