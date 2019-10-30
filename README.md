@@ -55,4 +55,32 @@ class Message(models.Model):
     action = models.CharField(max_length=40, blank=True, null=True)
     action_params = models.TextField(blank=True, null=True)
 ```
+##### Putting Firebase endpoints
+> Code snippet from general/firebase.py
+```
+def create_chat_on_firebase(firebase_id, user1_id, user2_id):
+    if get_from_environment('SETUP') == 'PRODUCTION':
+        if not firebase_ins:
+            firebase_admin.initialize_app(cred, {'projectId': firebase_app})
+        db = firestore.client()
+        context = {'notify_new_message_to_user1': False, 'notify_new_message_to_user2': False,'total_messages_count': 0, 'user1': user1_id, 'user2': user2_id}
+        db.collection('chats').document(firebase_id).set(context)
+
+```
+> Code snippet from general/firebase.py
+```
+def notify_new_msg_to_user(from_user, chat, count):
+    if get_from_environment('SETUP') == 'PRODUCTION':
+        if not firebase_ins:
+            firebase_admin.initialize_app(cred, {'projectId': firebase_app})
+        db = firestore.client()
+        if from_user == chat.user1 and chat.firebase_id:
+            db.collection('chats').document(chat.firebase_id).set({'total_messages_count': count}, merge=True)
+            db.collection(u'users-external-event').document(str(chat.user2.id)).set({'notify_new_message': True},merge=True)
+            push_notification_trigger(to_user=chat.user2, from_user=from_user, type='NEW_MESSAGE',reference_id=chat.user1.id,reference_username=chat.user1.username)
+        elif from_user == chat.user2 and chat.firebase_id:
+            db.collection('chats').document(chat.firebase_id).set({'total_messages_count': count}, merge=True)
+            db.collection(u'users-external-event').document(str(chat.user1.id)).set({'notify_new_message': True},merge=True)
+            push_notification_trigger(to_user=chat.user1, from_user=from_user, type='NEW_MESSAGE',reference_id=chat.user2.id, reference_username=chat.user2.username)
+```
 ##### Writing REST APIs
