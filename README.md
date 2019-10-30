@@ -21,6 +21,7 @@ In this part I will talk about developing a real time chat. You can check the ch
 
 ##### Defining a django models
 Our Chat architecture comprises of a Chat Model which is a channel between two participants. And Message Model which is each messages as part of this channel.
+> Code snippet from chat/models.py
 ```
 class Chat(models.Model):
     user1 = models.ForeignKey(User, related_name='primary_user', null=False, blank=False)
@@ -34,6 +35,7 @@ class Chat(models.Model):
     modified = models.DateTimeField(auto_now_add=True, editable=True)
 ```
 Each message object has an associated Foreignkey to Chat & User username, timestamp, and the actual message text.
+> Code snippet from chat/models.py
 ```
 class Message(models.Model):
     class Meta:
