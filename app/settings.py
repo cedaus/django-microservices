@@ -11,6 +11,19 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from django.core.exceptions import ImproperlyConfigured
+
+
+def get_from_environment(var_name):
+    try:
+        var = os.environ.get(var_name, 'random thing')
+        return var
+    except KeyError:
+        raise ImproperlyConfigured(var_name + " variable not found in the environment.")
+
+
+def get_path(val):
+    return os.path.join(BASE_DIR, val)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -98,6 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# FIREBASE
+firebase_app = 'XXXX'
 
 
 # Internationalization
