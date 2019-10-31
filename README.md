@@ -107,3 +107,30 @@ In this app we are going to explore the specifics of JWT authentication and how 
 1. djangorestframework==3.9.4
 2. djangorestframework-jwt==1.11.0
 3. PyJWT==1.7.1
+
+> Code snippet from settings.py
+
+```
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication'
+        ...
+        ...
+    ],
+}
+```
+
+```JWT_AUTH = {
+    'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_VERIFY': True,
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LEEWAY': 300,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=300),
+    'JWT_AUDIENCE': None,
+    'JWT_ISSUER': None,
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=300),
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}
+```
