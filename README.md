@@ -138,3 +138,27 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
 ```
+##### 2. Writing JWT Utils
+There are set of functions in authe/jwt_utils.py file that are relevant here. We in this document we will restrict to explaing the purpose of class JWTAuthentication.
+
+```
+class JWTAuthentication(authentication.BaseAuthentication):
+    def authenticate(self, request):
+        try:
+            JWToken = request.META.get('HTTP_AUTHORIZATION')[5:].split('>')[0]
+        except Exception:
+            JWToken = None
+        # If no token return None - no user was authenticated with the JWT
+        if not JWToken:
+            return None
+        try:
+            user = get_user_from_token(JWToken)
+        except User.DoesNotExist:
+            raise exceptions.AuthenticationFailed('No such user')
+        if not user.is_active:
+            raise exceptions.AuthenticationFailed('User Blocked')
+        return user, None
+
+    def enforce_csrf(self, request):
+        return
+```
