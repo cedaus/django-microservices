@@ -60,12 +60,12 @@ Before we dive into the the read and write operation to firebase, first of all c
 
 Create a Chat collection on 
 
-For example, conversation between User 109 and User 108 is stored in the node 108_109 and set as firebase_id in Chat Model. For the easily fetch user conversation I have followed pattern (LowerUserId_HigherUserId).
+For example, conversation between User 109 and User 108 is stored in the node as ChatID (108_109) and set as firebase_id in Chat Model of djanog. For the easily fetch user conversation I have followed pattern (LowerUserId_HigherUserId).
 ```
 -chats
    - chatID
        - user1
-        -user2
+       - user2
        - total_messages_count
        - last_message_timestamp
 ```
