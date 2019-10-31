@@ -162,3 +162,17 @@ class JWTAuthentication(authentication.BaseAuthentication):
     def enforce_csrf(self, request):
         return
 ```
+
+##### 3. Defining endpoints and writing APIs
+
+> Code snippet from authe/urls.py
+```
+urlpatterns = [
+    url(r'^api-token-auth/', obtain_jwt_token),
+    url(r'^api-token-refresh/', refresh_jwt_token),
+    url(r'^api-token-verify/', verify_jwt_token),
+    url(r'^phone-auth/', rest_views.PhoneAuth.as_view()),
+    url(r'^password-set/', rest_views.set_password),
+    url(r'^password-reset/', rest_views.reset_password)
+]
+```
