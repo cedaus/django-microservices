@@ -120,7 +120,8 @@ REST_FRAMEWORK = {
 }
 ```
 
-```JWT_AUTH = {
+```
+JWT_AUTH = {
     'JWT_SECRET_KEY': SECRET_KEY,
     'JWT_ALGORITHM': 'HS256',
     'JWT_VERIFY': True,
