@@ -19,7 +19,7 @@ In this part I will talk about developing a real time chat. You can check the ch
 * Firebase
 * AWS S3
 
-##### Defining a django models
+##### 1. Defining a django models
 Our Chat architecture comprises of a Chat Model which is a channel between two participants. And Message Model which is each messages as part of this channel.
 > Code snippet from chat/models.py
 ```
@@ -55,7 +55,7 @@ class Message(models.Model):
     action = models.CharField(max_length=40, blank=True, null=True)
     action_params = models.TextField(blank=True, null=True)
 ```
-##### Putting Firebase endpoints
+##### 2. Putting Firebase endpoints
 Before we dive into the the read and write operation to firebase, first of all create a model on firebase db that represent the scruture of chat message.
 
 Such that our Chat collection on firebase looks like this
@@ -96,7 +96,7 @@ def notify_new_msg_to_user(from_user, chat, count):
             db.collection(u'users-external-event').document(str(chat.user1.id)).set({'notify_new_message': True},merge=True)
             push_notification_trigger(to_user=chat.user1, from_user=from_user, type='NEW_MESSAGE',reference_id=chat.user2.id, reference_username=chat.user2.username)
 ```
-##### Writing REST APIs
+##### 3. Writing REST APIs
 
 ## JWT AUTH
 JWT stand for JSON Web Token and it is an authentication strategy used by client/server applications where the client is a Web application using JavaScript or mobile platforms like Android or iOS.
@@ -163,7 +163,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
         return
 ```
 
-##### 3. Defining endpoints and writing APIs
+##### 3. Writing APIs and defining endpoints
 
 > Code snippet from authe/urls.py
 ```
