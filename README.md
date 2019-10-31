@@ -19,6 +19,7 @@ In this part I will talk about developing a real time chat. You can check the ch
 * Firebase
 * AWS S3
 
+#### Development:
 ##### 1. Defining a django models
 Our Chat architecture comprises of a Chat Model which is a channel between two participants. And Message Model which is each messages as part of this channel.
 > Code snippet from chat/models.py
@@ -108,6 +109,7 @@ In this app we are going to explore the specifics of JWT authentication and how 
 2. djangorestframework-jwt==1.11.0
 3. PyJWT==1.7.1
 
+#### Development:
 ##### 1. Installing Libraries
 We will first start with first installing with proper jwt libraries for django and including them in app/settings.py as shown here
 
