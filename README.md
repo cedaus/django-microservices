@@ -99,3 +99,8 @@ def notify_new_msg_to_user(from_user, chat, count):
 ##### Writing REST APIs
 
 ## JWT AUTH
+JWT stand for JSON Web Token and it is an authentication strategy used by client/server applications where the client is a Web application using JavaScript or mobile platforms like Android or iOS.
+
+In this app we are going to explore the specifics of JWT authentication and how we have integrated the same withing Django to use either of Phone, Email, Google or Facebook auth.
+
+#### Libraries Used:
