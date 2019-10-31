@@ -178,7 +178,7 @@ urlpatterns = [
 ]
 ```
 
-##### 4. 
+##### 4. Handling token on client side
 
 So basically your response body is the two tokens. After that you are going to store both the access token and the refresh token on the client side, usually in the localStorage.
 ```
