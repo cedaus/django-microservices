@@ -97,3 +97,5 @@ def notify_new_msg_to_user(from_user, chat, count):
             push_notification_trigger(to_user=chat.user1, from_user=from_user, type='NEW_MESSAGE',reference_id=chat.user2.id, reference_username=chat.user2.username)
 ```
 ##### Writing REST APIs
+
+## JWT AUTH
