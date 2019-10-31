@@ -56,6 +56,19 @@ class Message(models.Model):
     action_params = models.TextField(blank=True, null=True)
 ```
 ##### Putting Firebase endpoints
+Before we dive into the the read and write operation to firebase, first of all create a model on firebase db that represent the scruture of chat message.
+
+Create a Chat collection on 
+
+For example, conversation between User 109 and User 108 is stored in the node 108_109 and set as firebase_id in Chat Model. For the easily fetch user conversation I have followed pattern (LowerUserId_HigherUserId).
+```
+-chats
+   - chatID
+       - user1
+        -user2
+       - total_messages_count
+       - last_message_timestamp
+```
 > Code snippet from general/firebase.py
 ```
 def create_chat_on_firebase(firebase_id, user1_id, user2_id):
