@@ -104,3 +104,6 @@ JWT stand for JSON Web Token and it is an authentication strategy used by client
 In this app we are going to explore the specifics of JWT authentication and how we have integrated the same withing Django to use either of Phone, Email, Google or Facebook auth.
 
 #### Libraries Used:
+1. djangorestframework==3.9.4
+2. djangorestframework-jwt==1.11.0
+3. PyJWT==1.7.1
