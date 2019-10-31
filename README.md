@@ -110,6 +110,9 @@ In this app we are going to explore the specifics of JWT authentication and how 
 
 > Code snippet from settings.py
 
+##### 1. Installing Libraries
+We will first start with first installing with proper jwt libraries for django and including them in app/settings.py as shown here
+
 ```
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
