@@ -19,7 +19,8 @@ In this part I will talk about developing a real time chat. You can check the ch
 * Firebase
 * AWS S3
 
-##### Defining a django models
+#### Development:
+##### 1. Defining a django models
 Our Chat architecture comprises of a Chat Model which is a channel between two participants. And Message Model which is each messages as part of this channel.
 > Code snippet from chat/models.py
 ```
@@ -55,7 +56,7 @@ class Message(models.Model):
     action = models.CharField(max_length=40, blank=True, null=True)
     action_params = models.TextField(blank=True, null=True)
 ```
-##### Putting Firebase endpoints
+##### 2. Putting Firebase endpoints
 Before we dive into the the read and write operation to firebase, first of all create a model on firebase db that represent the scruture of chat message.
 
 Such that our Chat collection on firebase looks like this
@@ -96,23 +97,143 @@ def notify_new_msg_to_user(from_user, chat, count):
             db.collection(u'users-external-event').document(str(chat.user1.id)).set({'notify_new_message': True},merge=True)
             push_notification_trigger(to_user=chat.user1, from_user=from_user, type='NEW_MESSAGE',reference_id=chat.user2.id, reference_username=chat.user2.username)
 ```
-##### Writing REST APIs
+##### 3. Writing REST APIs and defining endpoints
+
+> Code snippet from chat/api_urls.py
+```
+urlpatterns = [
+    url(r'^list/$', rest_views.get_chat_list),
+    url(r'^create/(?P<member_id>[-\w\d]+)/$', rest_views.create_chat),
+    url(r'^(?P<chat_id>[-\w\d]+)/$', rest_views.get_chat),
+    url(r'^message/add/(?P<chat_id>[-\w\d]+)/', rest_views.add_message),
+    url(r'^message/new/(?P<chat_id>[-\w\d]+)/', rest_views.get_new_message),
+    url(r'message/old/(?P<chat_id>[-\w\d]+)/$', rest_views.get_old_message)
+]
+```
+
+## CONTACTS AND INVITE BUILT WITH CELERY
+
+#### Libraries used:
+1. celery==4.2.2
+2. redis==3.3.4
+
+#### Development:
+##### 1. Setup for Celery in Django
+
+> Code snippet from app/celery.py
+```
+from __future__ import absolute_import
+import os
+from celery import Celery
+
+# set the default Django settings module for the 'celery' program.
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings')
+
+app = Celery()
+
+# Using a string here means the worker doesn't have to serialize
+# the configuration object to child processes.
+# - namespace='CELERY' means all celery-related configuration keys
+#   should have a `CELERY_` prefix.
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Load task modules from all registered Django app configs.
+app.autodiscover_tasks()
+
+```
+
+> Code snippet from app/settings.py
+```
+# -----------------------------
+# REDIS
+# -----------------------------
+# redis_url = os.getenv('REDISCLOUD_URL', 'redis://localhost:6379')
+redis_url = get_from_environment('REDISCLOUD_URL')
+
+# -----------------------------
+# CELERY
+# -----------------------------
+CELERY_BROKER_URL = get_from_environment('REDISCLOUD_URL')
+CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'application/text']
+
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = False
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERYD_MAX_TASKS_PER_CHILD = 1
+
+CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_RESULT_SERIALIZER = 'pickle'
+BROKER_POOL_LIMIT = 1  # Will decrease connection usage
+BROKER_CONNECTION_TIMEOUT = 30  # May require a long timeout due to Linux DNS timeouts etc
+BROKER_HEARTBEAT = 30  # Will detect stale connections faster
+CELERY_SEND_EVENTS = False  # Will not create celeryev.* queues
+CELERY_EVENT_QUEUE_EXPIRES = 86400 * 14  # Will delete all celeryev. queues without consumers after 1 minute.
+DEFAULT_CACHE_EXPIRE = 60
+```
+
+
+##### 2. Defining Django Models
+> Code snippet from contacts/models.py
+```
+class UserContact(models.Model):
+    user = models.ForeignKey(User, db_index=True)
+    contact = models.ForeignKey(User, null=True, related_name="user_contact")
+    source = models.CharField(max_length=10, choices=constants.imported_contact_sources_choices)
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True, db_index=True, null=True)
+    phone_code = models.CharField(max_length=5, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    state = models.CharField(max_length=10, choices=constants.user_contact_states_choices, default='0')
+    block_invites = models.BooleanField(default=False)
+    registered = models.BooleanField(default=False)
+    invited_at = models.DateTimeField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    
+    ....
+    
+    @staticmethod
+    def create(user, source, first_name=None, last_name='', phone=None, email=None):
+    
+    ....
+    
+    @staticmethod
+    def state_transition(invitor, invitee):
+    
+    ....
+    
+    @staticmethod
+    def get_contacts(user, state=None, offset=None):
+    
+    ....
+    
+    @staticmethod
+    def invite_contacts(user, invite_all=False, deselectd_ids=[], selected_ids=[]):
+    
+    ....
+```
 
 ## JWT AUTH
 JWT stand for JSON Web Token and it is an authentication strategy used by client/server applications where the client is a Web application using JavaScript or mobile platforms like Android or iOS.
 
 In this app we are going to explore the specifics of JWT authentication and how we have integrated the same withing Django to use either of Phone, Email, Google or Facebook auth.
 
+A JWT Token looks something like this xxxxx.yyyyy.zzzzz, those are three distinctive parts that compose a JWT:
+```
+header.payload.signature
+```
+
 #### Libraries Used:
 1. djangorestframework==3.9.4
 2. djangorestframework-jwt==1.11.0
 3. PyJWT==1.7.1
 
-> Code snippet from settings.py
-
+#### Development:
 ##### 1. Installing Libraries
 We will first start with first installing with proper jwt libraries for django and including them in app/settings.py as shown here
 
+> Code snippet from settings.py
 ```
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -141,6 +262,7 @@ JWT_AUTH = {
 ##### 2. Writing JWT Utils
 There are set of functions in authe/jwt_utils.py file that are relevant here. We in this document we will restrict to explaing the purpose of class JWTAuthentication.
 
+> Code snippet from authe/jwt_utils.py
 ```
 class JWTAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
@@ -163,9 +285,9 @@ class JWTAuthentication(authentication.BaseAuthentication):
         return
 ```
 
-##### 3. Defining endpoints and writing APIs
+##### 3. Writing APIs and defining endpoints
 
-> Code snippet from authe/urls.py
+> Code snippet from authe/api_urls.py
 ```
 urlpatterns = [
     url(r'^api-token-auth/', obtain_jwt_token),
@@ -175,4 +297,21 @@ urlpatterns = [
     url(r'^password-set/', rest_views.set_password),
     url(r'^password-reset/', rest_views.reset_password)
 ]
+```
+
+##### 4. Handling token on client side
+
+So basically your response body looks something like this. After that you are going to store the access token on the client side, usually in the localStorage.
+```
+{
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTQ1MjI0MjU5LCJqdGkiOiIyYmQ1NjI3MmIzYjI0YjNmOGI1MjJlNThjMzdjMTdlMSIsInVzZXJfaWQiOjF9.D92tTuVi_YcNkJtiLGHtcn6tBcxLCBxz9FKD3qzhUg8",
+    "user_id": "XXXX",
+    "username": "NAMEXXXXX"
+}
+
+```
+
+In order to access the protected views on the backend (i.e., the API endpoints that require authentication), you should include the access token in the header of all requests, like this:
+```
+http://127.0.0.1:8000/hello/ "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTQ1MjI0MjAwLCJqdGkiOiJlMGQxZDY2MjE5ODc0ZTY3OWY0NjM0ZWU2NTQ2YTIwMCIsInVzZXJfaWQiOjF9.9eHat3CvRQYnb5EdcgYFzUyMobXzxlAVh_IAgqyvzCE"
 ```
