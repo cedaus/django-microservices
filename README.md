@@ -113,12 +113,12 @@ urlpatterns = [
 
 ## CONTACTS AND INVITE BUILT WITH CELERY
 
-### Libraries used:
+#### Libraries used:
 1. celery==4.2.2
 2. redis==3.3.4
 
-### Development:
-#### 1. Setup for Celery in Django
+#### Development:
+##### 1. Setup for Celery in Django
 
 > Code snippet from app/celery.py
 ```
@@ -173,7 +173,7 @@ DEFAULT_CACHE_EXPIRE = 60
 ```
 
 
-#### 2. Defining Django Models
+##### 2. Defining Django Models
 > Code snippet from contacts/models.py
 ```
 class UserContact(models.Model):
