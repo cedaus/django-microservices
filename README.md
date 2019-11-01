@@ -113,6 +113,11 @@ urlpatterns = [
 
 ## CONTACTS AND INVITE BUILT WITH CELERY
 
+### Libraries used:
+1. celery==4.2.2
+2. redis==3.3.4
+
+### Development:
 #### 1. Setup for Celery in Django
 
 > Code snippet from app/celery.py
