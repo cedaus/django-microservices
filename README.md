@@ -111,7 +111,47 @@ urlpatterns = [
 ]
 ```
 
-## CELERY BASED CONTACTS UPLOAD
+## CONTACTS AND INVITE BUILT WITH CELERY
+
+> Code snippet from contacts/models.py
+```
+class UserContact(models.Model):
+    user = models.ForeignKey(User, db_index=True)
+    contact = models.ForeignKey(User, null=True, related_name="user_contact")
+    source = models.CharField(max_length=10, choices=constants.imported_contact_sources_choices)
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True, db_index=True, null=True)
+    phone_code = models.CharField(max_length=5, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    state = models.CharField(max_length=10, choices=constants.user_contact_states_choices, default='0')
+    block_invites = models.BooleanField(default=False)
+    registered = models.BooleanField(default=False)
+    invited_at = models.DateTimeField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    
+    ....
+    
+    @staticmethod
+    def create(user, source, first_name=None, last_name='', phone=None, email=None):
+    
+    ....
+    
+    @staticmethod
+    def state_transition(invitor, invitee):
+    
+    ....
+    
+    @staticmethod
+    def get_contacts(user, state=None, offset=None):
+    
+    ....
+    
+    @staticmethod
+    def invite_contacts(user, invite_all=False, deselectd_ids=[], selected_ids=[]):
+    
+    ....
+```
 
 ## JWT AUTH
 JWT stand for JSON Web Token and it is an authentication strategy used by client/server applications where the client is a Web application using JavaScript or mobile platforms like Android or iOS.
