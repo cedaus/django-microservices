@@ -48,6 +48,23 @@ reference_type_states = {
 }
 reference_type_states_choices = [tuple([v, k]) for k, v in reference_type_states.items()]
 
+imported_contact_sources = {
+    "LINKEDIN": "0",
+    "GOOGLE": "1",
+    "LINK": "2",
+    "PHONE": "3",
+}
+imported_contact_sources_choices = [tuple([v, k]) for k, v in imported_contact_sources.items()]
+
+user_contact_states = {
+    "Invite Pending": "0",
+    "Invite Sent": "1",
+    "Invite Reminder Sent": "2",
+    "Already Member": "3",
+    "Invite Success": "4",
+    "Invite Failure": "5",
+}
+user_contact_states_choices = [tuple([v, k]) for k, v in user_contact_states.items()]
 
 ERROR_CONFIG = {
     'ERR-DJNG-001': ("No CODE Passed", "Error Message"),
