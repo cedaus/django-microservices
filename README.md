@@ -97,7 +97,20 @@ def notify_new_msg_to_user(from_user, chat, count):
             db.collection(u'users-external-event').document(str(chat.user1.id)).set({'notify_new_message': True},merge=True)
             push_notification_trigger(to_user=chat.user1, from_user=from_user, type='NEW_MESSAGE',reference_id=chat.user2.id, reference_username=chat.user2.username)
 ```
-##### 3. Writing REST APIs
+##### 3. Writing REST APIs and defining endpoints
+
+```
+urlpatterns = [
+    url(r'^list/$', rest_views.get_chat_list),
+    url(r'^create/(?P<member_id>[-\w\d]+)/$', rest_views.create_chat),
+    url(r'^(?P<chat_id>[-\w\d]+)/$', rest_views.get_chat),
+    url(r'^message/add/(?P<chat_id>[-\w\d]+)/', rest_views.add_message),
+    url(r'^message/new/(?P<chat_id>[-\w\d]+)/', rest_views.get_new_message),
+    url(r'message/old/(?P<chat_id>[-\w\d]+)/$', rest_views.get_old_message)
+]
+```
+
+## CELERY BASED CONTACTS UPLOAD
 
 ## JWT AUTH
 JWT stand for JSON Web Token and it is an authentication strategy used by client/server applications where the client is a Web application using JavaScript or mobile platforms like Android or iOS.
