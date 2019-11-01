@@ -137,6 +137,37 @@ app.autodiscover_tasks()
 
 ```
 
+> Code snippet from app/settings.py
+```
+# -----------------------------
+# REDIS
+# -----------------------------
+# redis_url = os.getenv('REDISCLOUD_URL', 'redis://localhost:6379')
+redis_url = get_from_environment('REDISCLOUD_URL')
+
+# -----------------------------
+# CELERY
+# -----------------------------
+CELERY_BROKER_URL = get_from_environment('REDISCLOUD_URL')
+CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'application/text']
+
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = False
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERYD_MAX_TASKS_PER_CHILD = 1
+
+CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_RESULT_SERIALIZER = 'pickle'
+BROKER_POOL_LIMIT = 1  # Will decrease connection usage
+BROKER_CONNECTION_TIMEOUT = 30  # May require a long timeout due to Linux DNS timeouts etc
+BROKER_HEARTBEAT = 30  # Will detect stale connections faster
+CELERY_SEND_EVENTS = False  # Will not create celeryev.* queues
+CELERY_EVENT_QUEUE_EXPIRES = 86400 * 14  # Will delete all celeryev. queues without consumers after 1 minute.
+DEFAULT_CACHE_EXPIRE = 60
+```
+
+
 #### 2. Defining Django Models
 > Code snippet from contacts/models.py
 ```
