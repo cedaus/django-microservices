@@ -99,6 +99,7 @@ def notify_new_msg_to_user(from_user, chat, count):
 ```
 ##### 3. Writing REST APIs and defining endpoints
 
+> Code snippet from chat/api_urls.py
 ```
 urlpatterns = [
     url(r'^list/$', rest_views.get_chat_list),
@@ -160,6 +161,7 @@ JWT_AUTH = {
 ##### 2. Writing JWT Utils
 There are set of functions in authe/jwt_utils.py file that are relevant here. We in this document we will restrict to explaing the purpose of class JWTAuthentication.
 
+> Code snippet from authe/jwt_utils.py
 ```
 class JWTAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
@@ -184,7 +186,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
 
 ##### 3. Writing APIs and defining endpoints
 
-> Code snippet from authe/urls.py
+> Code snippet from authe/api_urls.py
 ```
 urlpatterns = [
     url(r'^api-token-auth/', obtain_jwt_token),
