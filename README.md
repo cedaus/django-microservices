@@ -71,7 +71,7 @@ Before we dive into the the read and write operation to firebase, first of all c
 ```
 Here chatID (LowerUserId_HigherUserId) is the conversation node between User1 for ex: 108 and User2 for ex: 109 and is also set as firebase_id in Chat Model in Djnago
 
-Our next step would be defininf some write operations for Firebase.
+Our next step would be defining some write operations for Firebase.
 > Code snippet from general/firebase.py
 ```
 def create_chat_on_firebase(firebase_id, user1_id, user2_id):
