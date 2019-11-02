@@ -238,6 +238,17 @@ def import_contacts_from_phone(user_id, contacts=[]):
     firebase.contacts_upload_trigger(to_user=user)
     return True
 ```
+##### 4. Writing APIs and defining end points
+
+
+##### 5. Preparing for server
+
+> Code snippet from Procfile
+```
+web: gunicorn commune.wsgi --log-file -
+worker: celery worker --app=app.celery.app
+```
+Here 2nd line 3rd $app is the actual name of your Django app. In our case its call app :)
 
 ## JWT AUTH
 JWT stand for JSON Web Token and it is an authentication strategy used by client/server applications where the client is a Web application using JavaScript or mobile platforms like Android or iOS.
