@@ -21,7 +21,8 @@ In this part I will talk about developing a real time chat. You can check the ch
 
 #### Development:
 ##### 1. Defining a django models
-Our Chat architecture comprises of a Chat Model which is a channel between two participants. And Message Model which is each messages as part of this channel.
+Our Chat architecture comprises of a Chat Model which is a channel between two participants. And Message Model which are messages sent across the Chat.
+
 > Code snippet from chat/models.py
 ```
 class Chat(models.Model):
@@ -35,6 +36,7 @@ class Chat(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False)
     modified = models.DateTimeField(auto_now_add=True, editable=True)
 ```
+
 Each message object has an associated Foreignkey to Chat & User username, timestamp, and the actual message text.
 > Code snippet from chat/models.py
 ```
@@ -57,9 +59,8 @@ class Message(models.Model):
     action_params = models.TextField(blank=True, null=True)
 ```
 ##### 2. Putting Firebase endpoints
-Before we dive into the the read and write operation to firebase, first of all create a model on firebase db that represent the scruture of chat message.
+Before we dive into the the read and write operation to firebase, first of all create a model on firebase db that represent the scruture of chat message, such that our Chat collection on firebase looks like this
 
-Such that our Chat collection on firebase looks like this
 ```
 -chats
    - chatID
@@ -70,6 +71,7 @@ Such that our Chat collection on firebase looks like this
 ```
 Here chatID (LowerUserId_HigherUserId) is the conversation node between User1 for ex: 108 and User2 for ex: 109 and is also set as firebase_id in Chat Model in Djnago
 
+Our next step would be defininf some write operations for Firebase.
 > Code snippet from general/firebase.py
 ```
 def create_chat_on_firebase(firebase_id, user1_id, user2_id):
