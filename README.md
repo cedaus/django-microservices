@@ -214,6 +214,29 @@ class UserContact(models.Model):
     ....
 ```
 
+##### 3. Creating a Celery Task
+
+> Code snippet from contacts/tasks.py
+```
+def import_contacts_from_phone(user_id, contacts=[]):
+    user = User.objects.get(id=user_id)
+    record = models.UserContactsImport.objects.get_or_create(user=user)[0]
+    record.phone_import_recorded = False
+    record.save()
+
+    for contact in contacts:
+        print(contact)
+        try:
+            models.UserContact.create(user=user, source='PHONE', first_name=contact['name'], phone=contact['phone'])
+        except Exception as e:
+            print(e)
+
+    record.phone_import_recorded = True
+    record.save()
+    firebase.contacts_upload_trigger(to_user=user)
+    return True
+```
+
 ## JWT AUTH
 JWT stand for JSON Web Token and it is an authentication strategy used by client/server applications where the client is a Web application using JavaScript or mobile platforms like Android or iOS.
 
